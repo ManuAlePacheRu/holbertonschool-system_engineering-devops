@@ -1,0 +1,40 @@
+1. Load Balancer Cluster (HAProxy)
+Purpose: The load balancer distributes incoming traffic across multiple web servers to ensure even load distribution, improve performance, and increase fault tolerance.
+Configuration:
+Cluster Setup: Multiple HAProxy instances configured in a cluster. This provides high availability and fault tolerance. If one load balancer fails, the other continues to handle traffic, minimizing downtime.
+Load Balancing Algorithms: HAProxy can use various algorithms such as Round-Robin, Least Connections, or IP Hash to manage traffic distribution.
+2. Web Server
+Purpose: The web server handles incoming HTTP/HTTPS requests, serves static content (HTML, CSS, JS), and forwards dynamic requests to the application server.
+Why Separate:
+Scalability: By separating the web server, you can scale it independently based on traffic needs.
+Performance: Isolating web server duties from application logic optimizes performance and allows for dedicated resource allocation.
+3. Application Server
+Purpose: The application server processes dynamic content, executes business logic, and interacts with the database. It generates responses based on user requests.
+Why Separate:
+Separation of Concerns: Isolates application logic from web server duties, leading to better manageability and focused resource usage.
+Scalability: Allows scaling of application processing power independently of web and database servers.
+4. Database Server
+Purpose: Stores and manages application data. Handles queries and updates from the application server.
+Why Separate:
+Performance: Isolates database operations from web and application logic, optimizing data access and processing.
+Security: Protects sensitive data by placing it on a dedicated server, which can be more tightly secured.
+Specifics About the Infrastructure
+Load Balancer Cluster (HAProxy)
+Why Add It:
+
+High Availability: A cluster of load balancers ensures that if one instance fails, the other can take over, maintaining continuous availability.
+Scalability: Distributes traffic efficiently across multiple web servers, improving performance and handling high traffic loads.
+Configuration Details:
+
+Cluster Setup: Configuring multiple HAProxy instances in a cluster involves setting up synchronization between them. This can include shared configuration files and health checks to ensure both instances are operational and can take over from each other if needed.
+Web Server
+Why Add It:
+Efficient Static Content Delivery: Dedicated to serving static files and managing HTTP/HTTPS requests, freeing the application server from this responsibility.
+Load Balancing: Works with the load balancer to ensure traffic is evenly distributed and can handle failover scenarios.
+Application Server
+Why Add It:
+Business Logic Execution: Manages dynamic content and processes application-specific tasks. By separating this from the web server, it allows better performance tuning and resource management for business logic.
+Database Server
+Why Add It:
+Data Management: Centralized data storage with dedicated resources ensures optimal performance and security for database operations.
+Isolation: Keeps database operations separate from web and application logic, which improves overall system stability and security.

@@ -1,0 +1,46 @@
+Infrastructure Design
+User Request
+
+A user accesses www.foobar.com through their browser.
+DNS Resolution
+
+The domain www.foobar.com points to the IP address of the load balancer via DNS. This allows the user to connect to the load balancer rather than directly to individual servers.
+Components
+Load Balancer (HAProxy)
+
+Role: The load balancer distributes incoming traffic among multiple web servers to ensure that no single server is overwhelmed. It improves redundancy, scalability, and fault tolerance.
+Distribution Algorithm: Common algorithms include Round-Robin, Least Connections, and IP Hash. For instance, Round-Robin distributes requests evenly across servers, while Least Connections sends traffic to the server with the fewest active connections. The choice depends on traffic patterns and server capabilities.
+Active-Active vs. Active-Passive:
+Active-Active: All load balancers are actively handling traffic. If one fails, the remaining load balancers continue to manage traffic without interruption.
+Active-Passive: One load balancer handles all traffic while others are on standby. If the active load balancer fails, one of the standby load balancers takes over. This setup can lead to downtime if failover does not happen smoothly.
+Web Server (Nginx)
+
+Role: Serves static content (HTML, CSS, JS) and forwards dynamic requests to the application server. It handles client requests and can manage HTTPS termination and caching.
+Application Server
+
+Role: Processes dynamic requests, executes the code, and interacts with the database. It generates responses based on the application logic and data retrieved from the database.
+Database (MySQL) - Primary-Replica (Master-Slave) Cluster
+
+Primary Node: Handles all write operations and updates. The application server sends data modifications to the primary node.
+Replica Node: Handles read operations and serves as a backup to the primary node. It receives copies of data from the primary node but does not process write requests. The application server can query the replica for read-heavy operations, reducing the load on the primary node.
+How It Works: Data written to the primary node is asynchronously replicated to the replica nodes. This ensures data redundancy and improves read performance by balancing the load.
+Additional Elements and Their Roles
+Additional Servers
+
+Web Servers: Multiple instances can be used to handle more traffic and provide redundancy. The load balancer will distribute traffic between these servers.
+Application Servers: Running multiple application servers can improve performance and reliability. Similar to web servers, traffic and load are balanced by the load balancer.
+Application Files
+
+Role: These files contain the website's code and are deployed on both web and application servers. They include static content and server-side code.
+Issues with This Infrastructure
+Single Points of Failure (SPOF)
+
+Load Balancer: If the load balancer fails and there is no high-availability setup, users may not be able to access the website.
+Primary Database Node: If the primary node fails and there is no failover mechanism, write operations cannot be processed.
+Security Issues
+
+No Firewall: Without a firewall, the servers are exposed to potential attacks. A firewall should be implemented to control access and protect against unauthorized access.
+No HTTPS: Without HTTPS, data transmitted between users and the servers is not encrypted, making it vulnerable to interception and tampering.
+No Monitoring
+
+Issue: Without monitoring, it is difficult to detect and respond to issues such as server failures, high traffic loads, or performance bottlenecks. Monitoring tools are crucial for maintaining and optimizing server performance.

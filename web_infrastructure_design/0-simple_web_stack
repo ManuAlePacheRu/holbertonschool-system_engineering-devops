@@ -1,0 +1,46 @@
+User Request
+
+A user wants to access the website by entering www.foobar.com in their web browser.
+DNS Resolution
+
+The domain name www.foobar.com is associated with the IP address 8.8.8.8 through DNS. When the user types www.foobar.com, their browser performs a DNS lookup to resolve this domain name to the IP address 8.8.8.8.
+Server Communication
+
+The user's computer (client) sends an HTTP request to the IP address 8.8.8.8.
+Infrastructure Design
+Server
+
+Definition: A server is a physical or virtual machine that provides services or resources to other machines (clients) over a network. In this case, it's a single machine hosting all the components of the web infrastructure.
+Components: The server has:
+Web Server: Nginx
+Application Server: (This could be PHP, Node.js, etc., depending on your setup)
+Application Files: Your website's code base
+Database: MySQL
+Web Server (Nginx)
+
+Role: Nginx handles incoming HTTP requests from clients. It serves static files (like HTML, CSS, and JavaScript) directly and forwards dynamic requests to the application server. It also manages HTTPS connections and can handle load balancing, but in this single-server scenario, its primary role is to serve content and manage requests.
+Application Server
+
+Role: The application server processes the dynamic parts of your website. For example, if your site requires user authentication, processing form submissions, or interacting with the database, this server handles that logic. The web server (Nginx) will pass requests to the application server, which executes the code and sends the results back to Nginx to be served to the user.
+Application Files
+
+Role: These are the files that contain the code for your website. They might include HTML, CSS, JavaScript, and server-side code (PHP, Python, Node.js, etc.). The web server serves these files directly or through the application server.
+Database (MySQL)
+
+Role: The database stores and manages data used by your application, such as user information, content, or configurations. The application server queries the database and processes the data as needed before sending the response back to the web server.
+DNS Record
+
+Type: For www.foobar.com, the DNS record is an A record. An A record maps a domain name to an IP address (in this case, 8.8.8.8).
+Communication
+
+Protocol: The server uses HTTP or HTTPS to communicate with the client's browser. When a request is made, the server responds with the requested content or an error message.
+Potential Issues
+Single Point of Failure (SPOF)
+
+Issue: Since everything is hosted on a single server, if that server fails or experiences issues, the entire website becomes unavailable. There’s no redundancy in place to handle failures.
+Downtime for Maintenance
+
+Issue: Performing maintenance or deploying new code often requires restarting the web server or application server, leading to downtime. Users may experience service interruptions during these periods.
+Scaling Limitations
+
+Issue: A single server can only handle a limited amount of traffic. If your website experiences a surge in traffic, the server might become overwhelmed, leading to slow performance or crashes. Scaling this setup would require upgrading the existing server or adding more servers, which introduces complexity.

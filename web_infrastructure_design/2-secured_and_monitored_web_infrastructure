@@ -1,0 +1,59 @@
+Infrastructure Design
+User Request
+
+A user accesses www.foobar.com through their browser.
+DNS Resolution
+
+The domain www.foobar.com resolves to the IP address of the load balancer via DNS.
+Components
+Load Balancer (HAProxy)
+
+Role: Distributes incoming traffic across multiple web servers to balance the load and ensure redundancy. It also terminates SSL/TLS connections (HTTPS).
+Web Servers (Nginx)
+
+Role: Serve static content and forward dynamic requests to the application servers. They handle the user requests after they are distributed by the load balancer.
+Application Servers
+
+Role: Process dynamic requests, execute application logic, and interact with the database.
+Database (MySQL) - Primary-Replica (Master-Slave) Cluster
+
+Primary Node: Handles all write operations.
+Replica Node: Handles read operations and serves as a backup. Data is replicated from the primary node to ensure data redundancy and improve read performance.
+Additional Security and Monitoring Elements
+Firewalls (3 Total)
+
+Role: Protect the infrastructure from unauthorized access and potential attacks. The firewalls should be configured as follows:
+Front-End Firewall: Positioned at the edge of your network to protect against external threats.
+Application Firewall: Positioned between the load balancer and the web/application servers to protect against specific application layer threats.
+Database Firewall: Positioned between the application servers and the database to control and monitor database access.
+SSL Certificate
+
+Role: Encrypts traffic between users and the load balancer, ensuring that data transmitted over the network is secure and protected from eavesdropping or tampering.
+HTTPS: Ensures data integrity and confidentiality. All HTTP traffic is encrypted, which is crucial for protecting sensitive information like user credentials and personal data.
+Monitoring Clients (3 Total)
+
+Role: Collect data on system performance, application health, and other metrics. For example, using Sumologic or similar tools, monitoring clients gather logs and metrics from various components of the infrastructure.
+Data Collection:
+Agent-Based Collection: Monitoring agents installed on servers collect and send metrics and logs to the monitoring platform.
+Log Collection: The monitoring system collects logs from different servers, including web, application, and database servers, and aggregates them for analysis.
+Monitoring and Metrics
+What Monitoring is Used For
+
+Role: Monitoring helps track the performance and health of the infrastructure. It allows you to detect and respond to issues such as server failures, high traffic loads, and performance bottlenecks. Effective monitoring ensures uptime, performance optimization, and rapid issue resolution.
+Collecting Data
+
+Agents: Monitoring agents installed on servers collect performance metrics (CPU usage, memory usage, disk I/O) and application-specific metrics (request rates, error rates).
+Logs: The system collects logs from various sources and analyzes them for anomalies and patterns that indicate issues or potential improvements.
+Monitoring Web Server QPS (Queries Per Second)
+
+How to Monitor: Set up monitoring tools to track HTTP request rates to your web servers. Configure metrics collection for web server logs to capture and analyze the number of requests per second. Tools like Sumologic, Datadog, or Prometheus can be used to visualize and alert on these metrics.
+Issues with This Infrastructure
+Terminating SSL at the Load Balancer Level
+
+Issue: SSL/TLS termination at the load balancer means that traffic between the load balancer and the web/application servers is unencrypted. This can expose sensitive data to potential interception if the internal network is compromised. To mitigate this, consider implementing encryption between internal components as well.
+Single MySQL Write Node
+
+Issue: Having only one MySQL server capable of accepting writes (the primary node) creates a single point of failure for write operations. If the primary node fails, write operations are disrupted. This can be mitigated by implementing a failover mechanism or a multi-primary database setup for high availability.
+Servers with All the Same Components
+
+Issue: Having servers with all the same components (e.g., web, application, and database) can lead to inefficiencies. For example, a server tasked with handling both web requests and database queries might become a bottleneck. Separating concerns and dedicating servers to specific roles (web, application, and database) enhances performance and scalability.
